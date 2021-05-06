@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.ion.sst.api_sample.mapper.AdminMapper">
+    <select id="getAdminById" resultType="net.ion.sst.api_sample.entity.Admin">
+        select a.user_id as userId,
+               a.password,
+               a.user_name as userName,
+               a.client_id as clientId,
+               c.client_name as clientName,
+               a.user_role as userRole,
+               a.profile_img as profileImg,
+               a.mobile,
+               a.email,
+               a.valid
+          from tbl_admin a
+          left join tbl_client c on c.client_id = a.client_id
+         where a.user_id = #{userId}
+    </select>
+
+    <select id="findAdmins" resultType="net.ion.sst.api_sample.entity.Admin">
+        select a.user_id as userId,
+               a.password,
+               a.user_name as userName,
+               a.client_id as clientId,
+               c.client_name as clientName,
+               a.user_role as userRole,
+               a.profile_img as profileImg,
+               a.mobile,
+               a.email,
+               a.valid
+          from tbl_admin a
+          left join tbl_client c on c.client_id = a.client_id
+         where 1=1
+        <if test="clientId != null">
+            and a.client_id = #{clientId}
+        </if>
+        <if test="keyword != null">
+            and (a.user_name like concat('%', #{keyword}, '%') or
+                 a.client_name like concat('%', #{keyword}, '%') or
+                 a.user_role like concat('%', #{keyword}, '%')
+                 )
+        </if>
+    </select>
+    <select id="getCheckersByClientId" resultType="net.ion.sst.api_sample.entity.Admin">
+        select a.user_id as userId,
+               a.password,
+               a.user_name as userName,
+               a.client_id as clientId,
+               c.client_name as clientName,
+               a.user_role as userRole,
+               a.profile_img as profileImg,
+               a.mobile,
+               a.email,
+               a.valid
+          from tbl_admin a
+          join tbl_client c on c.client_id = a.client_id
+         where a.client_id = #{clientId}
+           and a.user_role = 'checker'
+    </select>
+    <select id="getAdminsByClientId" resultType="net.ion.sst.api_sample.entity.Admin">
+        select a.user_id as userId,
+               a.password,
+               a.user_name as userName,
+               a.client_id as clientId,
+               c.client_name as clientName,
+               a.user_role as userRole,
+               a.profile_img as profileImg,
+               a.mobile,
+               a.email,
+               a.valid
+          from tbl_admin a
+          left join tbl_client c on c.client_id = a.client_id
+        <if test="clientId != 0">
+         where a.client_id = #{clientId}
+        </if>
+    </select>
+
+    <insert id="insertAdmin" parameterType="net.ion.sst.api_sample.entity.Admin">
+        insert into tbl_admin
+            (user_id, password, user_name, client_id, user_role, profile_img, mobile, email, valid)
+         values
+            (#{userId}, #{password}, #{userName}, #{clientId}, #{userRole}, #{profileImg}, #{mobile}, #{email}, #{valid})
+    </insert>
+
+    <update id="updateAdmin" parameterType="net.ion.sst.api_sample.entity.Admin">
+        update tbl_admin
+           set password = #{password},
+               user_name = #{userName},
+               client_id = #{clientId},
+               user_role = #{userRole},
+               profile_img = #{profileImg},
+               mobile = #{mobile},
+               email = #{email},
+               valid = #{valid}
+         where user_id = #{userId}
+    </update>
+
+    <delete id="deleteAdmin">
+        delete from tbl_admin
+         where user_id = #{userId}
+    </delete>
+</mapper>
