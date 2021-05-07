@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.ion.sst.api_sample.mapper.MemberMapper">
+    <select id="getMembersByClientId" resultType="net.ion.sst.api_sample.entity.Member">
+        select m.mobile,
+               m.client_id,
+               m.mem_name,
+               m.password,
+               m.email,
+               m.position,
+               m.comment,
+               m.valid,
+               m.profile_img,
+               m.car_number,
+               date_format(m.reg_time, '%Y-%m-%d') as regDate,
+               date_format(m.reg_time, '%Y-%m-%d %H:%i:%s') as regTime
+          from tbl_member m
+         where m.client_id = #{clientId}
+         order by m.mem_name;
+    </select>
+    <select id="getMembersByClientIdAndStatus" resultType="net.ion.sst.api_sample.entity.Member">
+        select m.mobile,
+               m.client_id,
+               m.mem_name,
+               m.password,
+               m.email,
+               m.position,
+               m.comment,
+               m.valid,
+               m.profile_img,
+               m.car_number,
+               date_format(m.reg_time, '%Y-%m-%d') as regDate,
+               date_format(m.reg_time, '%Y-%m-%d %H:%i:%s') as regTime
+          from tbl_member m
+         where m.client_id = #{clientId}
+           and m.status = #{status}
+         order by m.mem_name;
+    </select>
+
+    <select id="getMember" resultType="net.ion.sst.api_sample.entity.Member">
+        select m.mobile,
+               m.client_id,
+               m.mem_name,
+               m.password,
+               m.email,
+               m.position,
+               m.comment,
+               m.valid,
+               m.profile_img,
+               m.car_number,
+               date_format(m.reg_time, '%Y-%m-%d') as regDate,
+               date_format(m.reg_time, '%Y-%m-%d %H:%i:%s') as regTime
+          from tbl_member m
+         where m.client_id = #{clientId}
+           and m.mobile = #{mobile};
+    </select>
+
+    <insert id="insertMember" parameterType="net.ion.sst.api_sample.entity.Member">
+        insert into tbl_member
+            (client_id, mobile, mem_name, password, email, position, comment, valid, profile_img, car_number)
+        values
+            (#{clientId}, #{mobile}, #{memName}, #{password}, #{email}, #{position}, #{comment}, #{valid}, #{profileImg}, #{carNumber});
+    </insert>
+
+    <update id="updateMember" parameterType="net.ion.sst.api_sample.entity.Member">
+        update tbl_member
+           set mem_name = #{memName},
+               password = #{password},
+               email = #{email},
+               position = #{position},
+               comment = #{comment},
+               valid = #{valid},
+               profile_img = #{profileImg},
+               car_number = #{carNumber}
+         where client_id = #{clientId}
+           and mobile = #{mobile}
+    </update>
+
+    <delete id="deleteMember">
+        delete from tbl_member
+         where client_id = #{clientId}
+           and mobile = #{mobile}
+    </delete>
+
+    <update id="updateMemberValid">
+        update tbl_member
+           set valid = #{valid}
+         where client_id = #{clientId}
+           and mobile = #{mobile}
+    </update>
+    <update id="updateCarInfo" parameterType="net.ion.sst.api_sample.entity.CarInfo">
+        update tbl_member
+           set car_number = #{carNumber}
+         where client_id = #{clientId}
+           and mobile = #{mobile}
+    </update>
+
+    <select id="getAllMemberCount" resultType="int">
+        select count(*) as cnt
+          from tbl_member
+         where client_id = #{clientId}
+    </select>
+
+    <select id="getApprovedMemberCount" resultType="int">
+        select count(*) as cnt
+          from tbl_member
+         where client_id = #{clientId}
+           and status = 1;
+    </select>
+
+    <select id="getMemberCounts" resultType="net.ion.sst.api_sample.entity.CounterAndLabel">
+        select position as label, count(*) as count
+          from tbl_member
+         where client_id=#{clientId}
+         group by position
+    </select>
+</mapper>
